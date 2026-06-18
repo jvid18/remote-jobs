@@ -1,0 +1,14 @@
+packages:
+  - "."
+
+nodeLinker: hoisted
+
+# Security
+savePrefix: ''
+minimumReleaseAge: 1440 # 1 day
+blockExoticSubdeps: true
+strictDepBuilds: true
+verifyDepsBeforeRun: install
+optimisticRepeatInstall: true
+allowBuilds:
+  unrs-resolver: true
