@@ -52,6 +52,42 @@ remotejobs/
 
 ---
 
+## Type Design
+
+If a state cannot be represented by the type, it cannot happen. Constraints belong in types, not in comments or runtime checks.
+
+### Discriminated unions over nullable fields
+
+Avoid optional fields whose validity depends on another field's value. Model each case as its own type.
+
+```ts
+// wrong: companyName is only valid when type === 'company', but nothing enforces that
+type Poster = {
+  type: 'person' | 'company'
+  name: string
+  companyName?: string
+}
+
+// right: each case carries exactly the data it needs
+type PersonPoster  = { type: 'person';  name: string }
+type CompanyPoster = { type: 'company'; name: string; companyName: string }
+type Poster = PersonPoster | CompanyPoster
+```
+
+Accessing `companyName` on a `PersonPoster` is now a compile-time error. Chained optional access (`foo?.bar?.baz`) on a domain type is a signal the type is wrong.
+
+### Errors as part of the contract
+
+Domain operations do not throw for expected failures — they return `Result<T, E>`. Every possible failure is named and typed; callers handle each case explicitly or the compiler complains.
+
+See [ADR-001](./adr/001-result-pattern.md) for the full pattern and rationale.
+
+### External libraries at the boundary
+
+Third-party code throws, returns `null`, and follows its own conventions. Wrap it at the entry point so domain code never deals with it directly — adapters translate external shapes into domain types before they cross the boundary.
+
+---
+
 ## Path Alias
 
 `@/*` → `src/*`
