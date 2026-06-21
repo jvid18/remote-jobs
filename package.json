@@ -15,7 +15,10 @@
     "format:check": "prettier --check src/"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "./jest-setup.ts"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "~14.0.4",
@@ -50,8 +53,8 @@
     "@babel/core": "^7.25.2",
     "@commitlint/cli": "21.0.2",
     "@commitlint/config-conventional": "21.0.2",
-    "@testing-library/react-native": "14.0.0",
-    "@types/jest": "^29.5.12",
+    "@testing-library/react-native": "12.9.0",
+    "@types/jest": "^29.5.14",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.3.0",
     "eslint": "9.39.4",
