@@ -1,69 +1,50 @@
-# Remote Jobs
+# Welcome to your Expo app 👋
 
-Browse remote job listings powered by [Remotive](https://remotive.com). Built with Expo (SDK 52) and Expo Router.
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Try it
+## Get started
 
-Scan with **Expo Go** to preview the latest build:
+1. Install dependencies
 
-<p align="center">
-  <a href="exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac">
-    <img
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac"
-      alt="Open in Expo Go"
-      width="160"
-    />
-  </a>
-</p>
+   ```bash
+   npm install
+   ```
 
-Or open directly: [`exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac`](exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac)
+2. Start the app
 
-EAS dashboard: [remote-jobs @ expo.dev](https://expo.dev/accounts/jvid/projects/remote-jobs/updates/aaf18a5f-5871-4e75-add2-a804cdee45bc)
+   ```bash
+    npx expo start
+   ```
 
-## Requirements
+In the output, you'll find options to open the app in a
 
-- Node 20+
-- pnpm 11 — see [Why pnpm?](#why-pnpm) below
-- Expo Go on your device, or an iOS simulator / Android emulator
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-## Setup
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-```bash
-# install dependencies
-pnpm install
+## Get a fresh project
 
-# start the dev server
-pnpm start
-```
-
-Then press `i` for iOS simulator, `a` for Android emulator, or scan the QR with Expo Go.
-
-## Why pnpm?
-
-This project uses **pnpm 11**. Two reasons:
-
-1. **Disk efficiency** — pnpm stores packages in a global content-addressable cache and hard-links them into `node_modules`. A clean install on a machine that already has the cache costs almost nothing.
-
-2. **Supply-chain security** — pnpm 11 restricts lifecycle scripts by default. Packages can only run `postinstall` and similar scripts if they are explicitly listed in `pnpm.onlyBuiltDependencies` (in `package.json`) or approved via `pnpm.ignoredBuiltDependencies`. This blocks the most common vector for malicious packages to execute arbitrary code on install. npm and yarn run every package's lifecycle scripts unconditionally.
-
-Do not substitute `npm install` or `yarn` — the lockfile format is incompatible and you will lose the security guarantees above.
-
-## Scripts
-
-| Command | Description |
-|---|---|
-| `pnpm start` | Start Expo dev server |
-| `pnpm android` | Open on Android emulator |
-| `pnpm ios` | Open on iOS simulator |
-| `pnpm test` | Run Jest test suite |
-| `pnpm lint` | Run ESLint |
-
-## Publishing updates
-
-Updates are published via EAS Update:
+When you're ready, run:
 
 ```bash
-eas update --branch main --message "your message"
+npm run reset-project
 ```
 
-Any device running the app via Expo Go will pick up the update on next launch.
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+
+## Learn more
+
+To learn more about developing your project with Expo, look at the following resources:
+
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+
+## Join the community
+
+Join our community of developers creating universal apps.
+
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
