@@ -25,7 +25,9 @@ I used [pnpm](https://pnpm.io/installation) throughout the project — mainly fo
 
 ## Preview via Expo Go
 
-> **SDK 52 only.** Expo Go is version-locked — if your installed version targets SDK 53 or 54 this won't load. Check by opening Expo Go → Profile and looking for the SDK version. If it doesn't say 52, running locally is the way to go.
+> **SDK 52 only.** Expo Go is version-locked — if your installed version targets SDK 53 or 54 this won't load. Check by opening Expo Go → Profile and looking for the SDK version. If it doesn't say 52, you have two options:
+> - Install [Expo Go for SDK 52 (Android)](https://expo.dev/go?sdkVersion=52&platform=android&device=true) directly.
+> - Or run locally with `pnpm start` — no Expo Go version constraint applies.
 
 <p align="center">
   <a href="exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac?channel-name=preview">
