@@ -90,7 +90,7 @@ export function JobDetailContent({ job, onBack }: { job: Job; onBack: () => void
           accessibilityRole="button"
           accessibilityLabel={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
           accessibilityState={{ selected: isFavorite }}
-          style={styles.favSquare}
+          style={[styles.favSquare, isFavorite && styles.favSquareActive]}
         >
           <Ionicons
             name={isFavorite ? 'heart' : 'heart-outline'}
@@ -152,7 +152,13 @@ const useStyles = makeStyles(t => ({
     marginTop: 18,
     marginBottom: 7,
   },
-  companyRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  companyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
   company: {
     fontSize: t.font.size.body,
     fontWeight: t.font.weight.bold,
@@ -185,13 +191,12 @@ const useStyles = makeStyles(t => ({
   favSquare: {
     width: 56,
     height: 56,
-    borderRadius: t.radius.lg,
-    backgroundColor: t.color.surface,
-    borderWidth: 1.5,
-    borderColor: t.color.border,
+    borderRadius: t.radius.md,
+    backgroundColor: t.color.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  favSquareActive: { backgroundColor: t.color.dangerSurface },
   applyButton: {
     flex: 1,
     height: 56,

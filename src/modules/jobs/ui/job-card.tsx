@@ -67,7 +67,7 @@ export function JobCard({ job, onPress }: JobCardProps) {
         accessibilityLabel={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
         accessibilityState={{ selected: isFavorite }}
         hitSlop={8}
-        style={styles.heart}
+        style={[styles.heart, isFavorite && styles.heartActive]}
       >
         <Ionicons
           name={isFavorite ? 'heart' : 'heart-outline'}
@@ -89,7 +89,7 @@ const useStyles = makeStyles(t => ({
     marginBottom: 14,
   },
   content: { flex: 1 },
-  headerRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 13, paddingRight: 51 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 13, paddingRight: 62 },
   titleColumn: { flex: 1, minWidth: 0, paddingTop: 1 },
   company: {
     fontSize: t.font.size.footnote,
@@ -105,8 +105,8 @@ const useStyles = makeStyles(t => ({
   },
   heart: {
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: 18,
+    right: 18,
     width: 38,
     height: 38,
     borderRadius: t.radius.md,
@@ -114,6 +114,7 @@ const useStyles = makeStyles(t => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  heartActive: { backgroundColor: t.color.dangerSurface },
   locationRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 13 },
   location: {
     fontSize: t.font.size.footnote,
