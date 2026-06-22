@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
+import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { useColorScheme } from '@/shared/hooks/use-color-scheme'
 import { SWRProvider } from '@/shared/http/swr-provider'
@@ -29,14 +30,16 @@ export default function RootLayout() {
   }
 
   return (
-    <SWRProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </SWRProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <SWRProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </SWRProvider>
+    </SafeAreaProvider>
   )
 }
