@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
-import { useMemo, useState } from 'react'
+import type { BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native'
 
 import { useCategories } from '@/modules/jobs/hooks/use-categories'
@@ -28,7 +29,8 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
   const [searchInput, setSearchInput] = useState('')
   const [category, setCategory] = useState<string | null>(null)
   const [type, setType] = useState<JobType | null>(null)
-  const [filterOpen, setFilterOpen] = useState(false)
+  const filterRef = useRef<BottomSheetModal>(null)
+  const listRef = useRef<FlatList>(null)
 
   const search = useDebouncedValue(searchInput, 300)
   const query = useMemo<JobQuery>(
@@ -43,6 +45,12 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
   const jobs = useJobs(query)
   const { categories } = useCategories()
 
+  // Jump back to the top whenever the active query changes, so results aren't shown
+  // mid-scroll from the previous filter.
+  useEffect(() => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: false })
+  }, [query])
+
   const isFiltering = Boolean(search || category || type)
   const reset = () => {
     setSearchInput('')
@@ -50,7 +58,9 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
     setType(null)
   }
 
-  const header = (
+  // App name, search and category chips stay pinned so search and category are usable at
+  // any scroll position — favouring function over reclaiming the space on scroll.
+  const pinnedBar = (
     <View>
       <Text style={styles.wordmark}>RemoteJobs</Text>
       <View style={styles.searchRow}>
@@ -60,7 +70,7 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
           onClear={() => setSearchInput('')}
         />
         <Pressable
-          onPress={() => setFilterOpen(true)}
+          onPress={() => filterRef.current?.present()}
           accessibilityRole="button"
           accessibilityLabel="Filter by job type"
           accessibilityState={{ selected: type !== null }}
@@ -73,18 +83,32 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
           />
         </Pressable>
       </View>
-      <CategoryChips categories={categories} selected={category} onSelect={setCategory} />
+      <View style={styles.chipsInner}>
+        <CategoryChips categories={categories} selected={category} onSelect={setCategory} />
+      </View>
+    </View>
+  )
+
+  // Section title + count scroll with the list.
+  const scrollHeader = (
+    <View>
       <View style={styles.sectionRow}>
         <Text style={styles.sectionTitle}>{isFiltering ? 'Results' : 'Recent jobs'}</Text>
         {jobs.status === 'ready' ? <Text style={styles.count}>{jobs.jobs.length} jobs</Text> : null}
       </View>
+      <View style={styles.divider} />
     </View>
   )
 
   return (
     <Screen>
-      {header}
-      {jobs.status === 'loading' ? <JobsSkeleton /> : null}
+      {pinnedBar}
+      {jobs.status === 'loading' ? (
+        <>
+          {scrollHeader}
+          <JobsSkeleton />
+        </>
+      ) : null}
       {jobs.status === 'error' ? (
         <StatusView
           tone="error"
@@ -94,29 +118,33 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
         />
       ) : null}
       {jobs.status === 'empty' ? (
-        <StatusView
-          title="No jobs found"
-          message="Try a different keyword or adjust your filters to see more roles."
-          action={{ label: 'Clear filters', onPress: reset, variant: 'outline' }}
-        />
+        <>
+          {scrollHeader}
+          <StatusView
+            title="No jobs found"
+            message="Try a different keyword or adjust your filters to see more roles."
+            action={{ label: 'Clear filters', onPress: reset, variant: 'outline' }}
+          />
+        </>
       ) : null}
       {jobs.status === 'ready' ? (
         <FlatList
+          ref={listRef}
           data={jobs.jobs}
           keyExtractor={job => job.id}
-          renderItem={({ item }) => <JobCard job={item} onPress={() => onOpenJob(item.id)} />}
+          renderItem={({ item }) => (
+            <View style={styles.cardWrap}>
+              <JobCard job={item} onPress={() => onOpenJob(item.id)} />
+            </View>
+          )}
+          ListHeaderComponent={scrollHeader}
           contentContainerStyle={styles.listContent}
           keyboardShouldPersistTaps="handled"
           refreshControl={<RefreshControl refreshing={jobs.refreshing} onRefresh={jobs.refresh} />}
         />
       ) : null}
 
-      <JobTypeSheet
-        visible={filterOpen}
-        selected={type}
-        onSelect={setType}
-        onClose={() => setFilterOpen(false)}
-      />
+      <JobTypeSheet ref={filterRef} selected={type} onSelect={setType} />
     </Screen>
   )
 }
@@ -128,15 +156,15 @@ const useStyles = makeStyles(t => ({
     color: t.color.textPrimary,
     paddingHorizontal: t.spacing.xl,
     paddingTop: 8,
-    paddingBottom: 16,
+    paddingBottom: 14,
   },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     paddingHorizontal: t.spacing.xl,
-    marginBottom: 16,
   },
+  chipsInner: { paddingTop: 14, paddingBottom: 4 },
   filterButton: {
     width: 54,
     height: 54,
@@ -153,7 +181,7 @@ const useStyles = makeStyles(t => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: t.spacing.xl,
-    paddingTop: 18,
+    paddingTop: 12,
     paddingBottom: 8,
   },
   sectionTitle: {
@@ -166,5 +194,13 @@ const useStyles = makeStyles(t => ({
     fontWeight: t.font.weight.bold,
     color: t.color.textMuted,
   },
-  listContent: { paddingHorizontal: t.spacing.xl, paddingBottom: 120 },
+  divider: {
+    height: 1,
+    backgroundColor: t.color.border,
+    marginTop: 4,
+    marginBottom: 16,
+    marginHorizontal: t.spacing.xl,
+  },
+  cardWrap: { paddingHorizontal: t.spacing.xl },
+  listContent: { paddingTop: 8, paddingBottom: 120 },
 }))

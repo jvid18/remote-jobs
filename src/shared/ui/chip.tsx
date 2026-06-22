@@ -1,4 +1,4 @@
-import { Pressable, Text } from 'react-native'
+import { type LayoutChangeEvent, Pressable, Text } from 'react-native'
 
 import { makeStyles } from '@/shared/theme/make-styles'
 
@@ -6,13 +6,15 @@ type ChipProps = {
   label: string
   selected?: boolean
   onPress?: () => void
+  onLayout?: (event: LayoutChangeEvent) => void
 }
 
-export function Chip({ label, selected = false, onPress }: ChipProps) {
+export function Chip({ label, selected = false, onPress, onLayout }: ChipProps) {
   const styles = useStyles()
   return (
     <Pressable
       onPress={onPress}
+      onLayout={onLayout}
       accessibilityRole="button"
       accessibilityState={{ selected }}
       style={[styles.base, selected ? styles.selected : styles.idle]}

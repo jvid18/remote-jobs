@@ -29,7 +29,11 @@ export function JobsSkeleton() {
   }, [opacity])
 
   return (
-    <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+    <View
+      style={styles.list}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
       {PLACEHOLDERS.map(key => (
         <Animated.View key={key} testID="job-skeleton" style={[styles.card, { opacity }]}>
           <View style={styles.row}>
@@ -46,12 +50,14 @@ export function JobsSkeleton() {
 }
 
 const useStyles = makeStyles(t => ({
+  list: { paddingHorizontal: t.spacing.xl, paddingTop: 8 },
   card: {
     backgroundColor: t.color.surface,
     borderWidth: 1,
     borderColor: t.color.borderSubtle,
     borderRadius: t.radius.xl,
-    padding: 18,
+    paddingHorizontal: 18,
+    paddingVertical: 32,
     marginBottom: 14,
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: 13 },
