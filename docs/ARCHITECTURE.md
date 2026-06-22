@@ -16,34 +16,37 @@
 
 ## Folder Structure
 
+Illustrative, not exhaustive — every slice follows the same `domain / infra / hooks / ui` shape, so the tree shows the pattern rather than every file.
+
 ```
-remotejobs/
-├── src/
-│   ├── app/                    # Expo Router file-based routing
-│   │   ├── _layout.tsx
-│   │   └── (tabs)/
-│   │       ├── _layout.tsx
-│   │       └── index.tsx       # Jobs list screen
-│   ├── assets/                 # Static assets (fonts, images)
-│   ├── modules/                # Vertical slices (screaming architecture)
-│   │   └── jobs/               # Job browsing feature
-│   │       ├── job.ts          # Domain types
-│   │       ├── job-catalog.ts  # Gateway contract
-│   │       └── ui/
-│   └── shared/                 # Cross-cutting concerns
-│       ├── ui/                 # Reusable UI components
-│       ├── hooks/              # Shared hooks
-│       ├── constants/          # App-wide constants
-│       └── theme/              # Theme contract + useTheme
-├── .env.example
-└── .env                        # git-ignored
+src/
+├── app/                 # Expo Router shells — routing only, no logic
+│   ├── (tabs)/          # Jobs list + Favorites tabs
+│   ├── jobs/[id].tsx    # Job detail
+│   └── +not-found.tsx
+├── modules/             # Vertical slices, one folder per feature
+│   ├── jobs/            # Browse + detail
+│   │   ├── job.ts           # Domain types
+│   │   ├── job-catalog.ts   # Gateway contract
+│   │   ├── infra/           # Adapters: HTTP + API→domain mapping + cache keys
+│   │   ├── hooks/           # SWR-backed read models
+│   │   └── ui/
+│   └── favorites/      # Saved jobs (Zustand store + AsyncStorage)
+└── shared/             # Cross-cutting: config, http, lib, theme, ui, hooks, result.ts
 ```
+
+---
+
+## State & Data
+
+- **Server data**: SWR owns the cache, keyed by query. Slices expose hooks that return discriminated UI states (`loading | error | empty | ready`) instead of raw promises; the detail screen reads the same cache entry as the list.
+- **Local persistence**: favorites live in a Zustand store backed by AsyncStorage, stored as self-contained snapshots so a saved job survives even if it later drops off the API.
 
 ---
 
 ## Architectural Principles
 
-- **Vertical slices**: each module (`jobs`, `auth`, …) owns its types, contracts, implementations, and UI — no cross-module imports
+- **Vertical slices**: each module (`jobs`, `favorites`, …) owns its types, contracts, implementations, and UI — no cross-module imports
 - **Dependency flow**: `ui → domain ← infrastructure` — domain has no deps on React or Expo
 - **No barrel files**: direct imports, no re-exports via `index.ts`
 - **No `enum`**: use `const` objects + derived types
@@ -69,7 +72,7 @@ type Poster = {
 }
 
 // right: each case carries exactly the data it needs
-type PersonPoster  = { type: 'person';  name: string }
+type PersonPoster = { type: 'person'; name: string }
 type CompanyPoster = { type: 'company'; name: string; companyName: string }
 type Poster = PersonPoster | CompanyPoster
 ```
@@ -84,7 +87,9 @@ See [ADR-001](./adr/001-result-pattern.md) for the full pattern and rationale.
 
 ### External libraries at the boundary
 
-Third-party code throws, returns `null`, and follows its own conventions. Wrap it at the entry point so domain code never deals with it directly — adapters translate external shapes into domain types before they cross the boundary.
+Third-party code throws, returns `null`, and follows its own conventions. Wrap it at the entry point so domain code never deals with it directly — adapters (in each slice's `infra/`) translate external shapes into domain types before they cross the boundary.
+
+See [ADR-002](./adr/002-agnostic-domain.md) for the agnostic-domain / anti-corruption layer, and [ADR-003](./adr/003-filter-intermediary.md) for the env-gated client-side filter.
 
 ---
 
