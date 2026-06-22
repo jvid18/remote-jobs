@@ -1,7 +1,15 @@
 import { Ionicons } from '@expo/vector-icons'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, type ListRenderItem, Pressable, RefreshControl, Text, View } from 'react-native'
+import {
+  FlatList,
+  Image,
+  type ListRenderItem,
+  Pressable,
+  RefreshControl,
+  Text,
+  View,
+} from 'react-native'
 
 import { useCategories } from '@/modules/jobs/hooks/use-categories'
 import { useJobs } from '@/modules/jobs/hooks/use-jobs'
@@ -72,7 +80,14 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
   // App name, search and category chips stay pinned on top
   const pinnedBar = (
     <View>
-      <Text style={styles.wordmark}>RemoteJobs</Text>
+      <View style={styles.wordmarkRow}>
+        <Image
+          source={require('@/assets/images/icon-mark.png')}
+          style={styles.wordmarkIcon}
+          resizeMode="cover"
+        />
+        <Text style={styles.wordmark}>RemoteJobs</Text>
+      </View>
       <View style={styles.searchRow}>
         <SearchBar
           value={searchInput}
@@ -156,13 +171,23 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
 }
 
 const useStyles = makeStyles(t => ({
+  wordmarkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: t.spacing.xl,
+    paddingTop: 8,
+    paddingBottom: 14,
+  },
+  wordmarkIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 8,
+  },
   wordmark: {
     fontSize: t.font.size.h3,
     fontWeight: t.font.weight.extrabold,
     color: t.color.textPrimary,
-    paddingHorizontal: t.spacing.xl,
-    paddingTop: 8,
-    paddingBottom: 14,
   },
   searchRow: {
     flexDirection: 'row',
