@@ -105,8 +105,8 @@ const useStyles = makeStyles(t => ({
   },
   heart: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 5,
+    right: 5,
     width: 38,
     height: 38,
     borderRadius: t.radius.md,

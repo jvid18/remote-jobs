@@ -31,6 +31,26 @@ jest.mock('@expo/vector-icons/MaterialIcons', () => {
   }
 })
 
+// gorhom mounts its content through a portal only after an imperative present();
+// render children inline so component tests can query the sheet contents directly.
+jest.mock('@gorhom/bottom-sheet', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- Jest setup file
+  const { createElement, forwardRef } = require('react')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- Jest setup file
+  const { View } = require('react-native')
+  const passthrough = forwardRef((props: { children?: React.ReactNode }, _ref: unknown) =>
+    createElement(View, null, props.children),
+  )
+  passthrough.displayName = 'MockBottomSheet'
+  return {
+    __esModule: true,
+    BottomSheetModal: passthrough,
+    BottomSheetView: View,
+    BottomSheetBackdrop: () => null,
+    BottomSheetModalProvider: ({ children }: { children: React.ReactNode }) => children,
+  }
+})
+
 jest.mock('react-native-safe-area-context', () => {
   const insets = { top: 0, right: 0, bottom: 0, left: 0 }
   const frame = { x: 0, y: 0, width: 375, height: 812 }

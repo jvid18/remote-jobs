@@ -1,6 +1,15 @@
-import { Modal, Pressable, Text, View } from 'react-native'
+import {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet'
+import { forwardRef, type MutableRefObject, useCallback, useRef } from 'react'
+import { Pressable, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { makeStyles } from '@/shared/theme/make-styles'
+import { useTheme } from '@/shared/theme/use-theme'
 import { Chip } from '@/shared/ui/chip'
 
 import { JOB_TYPES, type JobType } from '../job'
@@ -15,24 +24,49 @@ const TYPES: JobType[] = [
 ]
 
 type JobTypeSheetProps = {
-  visible: boolean
   selected: JobType | null
   onSelect: (type: JobType | null) => void
-  onClose: () => void
 }
 
-export function JobTypeSheet({ visible, selected, onSelect, onClose }: JobTypeSheetProps) {
+// Imperative: the parent opens it with `ref.current?.present()`. Selection stays in the
+// parent (via onSelect); the sheet just closes on swipe, backdrop tap, or "Done".
+export const JobTypeSheet = forwardRef<BottomSheetModal, JobTypeSheetProps>(function JobTypeSheet(
+  { selected, onSelect },
+  ref,
+) {
   const styles = useStyles()
+  const theme = useTheme()
+  const insets = useSafeAreaInsets()
+
+  // Keep an internal handle so the "Done" button can dismiss while still forwarding
+  // the same instance to the parent's ref.
+  const innerRef = useRef<BottomSheetModal | null>(null)
+  const setRefs = useCallback(
+    (node: BottomSheetModal | null) => {
+      innerRef.current = node
+      if (typeof ref === 'function') ref(node)
+      else if (ref) (ref as MutableRefObject<BottomSheetModal | null>).current = node
+    },
+    [ref],
+  )
+
+  // Backdrop fades in over the sheet (opacity), it does not slide with it.
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} />
+    ),
+    [],
+  )
+
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable
-        style={styles.backdrop}
-        onPress={onClose}
-        accessibilityRole="button"
-        accessibilityLabel="Close filters"
-      />
-      <View style={styles.sheet}>
-        <View style={styles.handle} />
+    <BottomSheetModal
+      ref={setRefs}
+      enableDynamicSizing
+      backdropComponent={renderBackdrop}
+      handleIndicatorStyle={{ backgroundColor: theme.color.border }}
+      backgroundStyle={styles.background}
+    >
+      <BottomSheetView style={[styles.content, { paddingBottom: insets.bottom + 24 }]}>
         <View style={styles.headerRow}>
           <Text style={styles.title}>Job type</Text>
           <Pressable onPress={() => onSelect(null)} accessibilityRole="button">
@@ -50,32 +84,21 @@ export function JobTypeSheet({ visible, selected, onSelect, onClose }: JobTypeSh
             />
           ))}
         </View>
-        <Pressable onPress={onClose} accessibilityRole="button" style={styles.cta}>
+        <Pressable
+          onPress={() => innerRef.current?.dismiss()}
+          accessibilityRole="button"
+          style={styles.cta}
+        >
           <Text style={styles.ctaLabel}>Done</Text>
         </Pressable>
-      </View>
-    </Modal>
+      </BottomSheetView>
+    </BottomSheetModal>
   )
-}
+})
 
 const useStyles = makeStyles(t => ({
-  backdrop: { flex: 1, backgroundColor: 'rgba(20,20,34,0.38)' },
-  sheet: {
-    backgroundColor: t.color.surface,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: t.spacing.xl,
-    paddingTop: 10,
-    paddingBottom: 30,
-  },
-  handle: {
-    width: 42,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: t.color.border,
-    alignSelf: 'center',
-    marginBottom: 18,
-  },
+  background: { backgroundColor: t.color.surface, borderRadius: 28 },
+  content: { paddingHorizontal: t.spacing.xl, paddingTop: 6 },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
