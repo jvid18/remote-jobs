@@ -3,13 +3,12 @@ import useSWR from 'swr'
 
 import { jobCatalog } from '@/modules/jobs/infra/catalog'
 import { filterJobs } from '@/modules/jobs/infra/client-filter'
+import { JOBS_ALL_KEY } from '@/modules/jobs/infra/jobs-cache'
 import type { Job } from '@/modules/jobs/job'
 import type { JobQuery } from '@/modules/jobs/job-catalog'
 import type { JobError } from '@/modules/jobs/job-errors'
 import { env } from '@/shared/config/env'
 import { type ResultError, resultFetcher } from '@/shared/http/swr-fetcher'
-
-const JOBS_ALL_KEY = ['jobs', 'all']
 
 export type JobsState =
   | { status: 'loading' }
@@ -27,9 +26,6 @@ function serializeServerQuery(query: JobQuery): string {
 }
 
 export function useJobs(query: JobQuery): UseJobs {
-  // What the server resolves vs what we filter locally. In client mode the server
-  // gets nothing and every field is filtered in memory; in server mode the API
-  // handles search/category and only `type` stays client-side.
   const serverQuery: JobQuery = env.clientSideFilters
     ? {}
     : { search: query.search, category: query.category }
