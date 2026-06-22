@@ -52,6 +52,28 @@ describe('JobDetailScreen', () => {
     mockJobs([])
     render(<JobDetailScreen id="404" onBack={jest.fn()} />, { wrapper })
 
-    await waitFor(() => expect(screen.getByText('Job not found')).toBeOnTheScreen())
+    await waitFor(() => expect(screen.getByText('Job no longer available')).toBeOnTheScreen())
+    expect(screen.getByText('Go back')).toBeOnTheScreen()
+  })
+
+  it('offers to remove a saved job that is no longer available', async () => {
+    mockJobs([])
+    useFavoritesStore.setState({
+      byId: {
+        404: {
+          id: '404',
+          title: 'Gone Role',
+          companyName: 'Globex',
+          companyLogoUrl: null,
+          category: 'Software Development',
+          location: 'Europe',
+          type: 'full_time',
+          publishedAt: '2026-06-01T00:00:00.000Z',
+        },
+      },
+    })
+    render(<JobDetailScreen id="404" onBack={jest.fn()} />, { wrapper })
+
+    await waitFor(() => expect(screen.getByText('Remove from favorites')).toBeOnTheScreen())
   })
 })
