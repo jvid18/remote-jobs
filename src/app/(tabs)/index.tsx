@@ -1,19 +1,16 @@
-import { StyleSheet, View } from 'react-native'
+import { useRouter } from 'expo-router'
 
-import { ThemedText } from '@/shared/ui/themed-text'
+import { JobsListScreen } from '@/modules/jobs/ui/jobs-list-screen'
 
-export default function JobsScreen() {
+export default function JobsRoute() {
+  const router = useRouter()
+  // The /jobs/[id] route is created in Phase 3 (Job Detail).
   return (
-    <View style={styles.container}>
-      <ThemedText type="title">Jobs</ThemedText>
-    </View>
+    <JobsListScreen
+      onOpenJob={id =>
+        // @ts-expect-error route is added in Phase 3
+        router.push(`/jobs/${id}`)
+      }
+    />
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})
