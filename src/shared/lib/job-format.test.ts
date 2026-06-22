@@ -39,6 +39,12 @@ describe('relativeDate', () => {
   it('reports weeks beyond seven days', () => {
     expect(relativeDate(new Date('2026-06-07T12:00:00Z'), now)).toBe('2 weeks ago')
   })
+  it('reports months beyond thirty days', () => {
+    expect(relativeDate(new Date('2026-04-01T12:00:00Z'), now)).toBe('2 months ago')
+  })
+  it('reports years beyond a year', () => {
+    expect(relativeDate(new Date('2024-06-21T12:00:00Z'), now)).toBe('2 years ago')
+  })
 })
 
 describe('companyInitial', () => {
