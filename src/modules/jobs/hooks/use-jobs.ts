@@ -19,22 +19,32 @@ export type JobsState =
 
 export type UseJobs = JobsState & { refreshing: boolean; refresh: () => void }
 
-function serializeQuery(query: JobQuery): string {
-  return JSON.stringify([query.search ?? '', query.category ?? '', query.type ?? ''])
+// `type` is omitted: the Remotive API exposes the param but it currently does
+// not work, so type is always filtered client-side (see clientQuery below). It
+// must not drive the SWR key — it changes nothing about the request.
+function serializeServerQuery(query: JobQuery): string {
+  return JSON.stringify([query.search ?? '', query.category ?? ''])
 }
 
 export function useJobs(query: JobQuery): UseJobs {
-  const key = env.clientSideFilters ? JOBS_ALL_KEY : ['jobs', serializeQuery(query)]
+  // What the server resolves vs what we filter locally. In client mode the server
+  // gets nothing and every field is filtered in memory; in server mode the API
+  // handles search/category and only `type` stays client-side.
+  const serverQuery: JobQuery = env.clientSideFilters
+    ? {}
+    : { search: query.search, category: query.category }
+
+  const key = env.clientSideFilters ? JOBS_ALL_KEY : ['jobs', serializeServerQuery(serverQuery)]
 
   const { data, error, isLoading, isValidating, mutate } = useSWR<Job[], ResultError<JobError>>(
     key,
-    () => resultFetcher(() => jobCatalog.listJobs(env.clientSideFilters ? {} : query)),
+    () => resultFetcher(() => jobCatalog.listJobs(serverQuery)),
   )
 
-  const jobs = useMemo(
-    () => (env.clientSideFilters ? filterJobs(data ?? [], query) : (data ?? [])),
-    [data, query],
-  )
+  const jobs = useMemo(() => {
+    const clientQuery: JobQuery = env.clientSideFilters ? query : { type: query.type }
+    return filterJobs(data ?? [], clientQuery)
+  }, [data, query])
 
   const refresh = () => {
     void mutate()

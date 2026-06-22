@@ -64,6 +64,23 @@ describe('useJobs', () => {
     }
   })
 
+  it('applies the client-side type filter over the cached list', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        jobs: [rawJob({ id: 1, job_type: 'full_time' }), rawJob({ id: 2, job_type: 'contract' })],
+      }),
+    })
+
+    const { result } = renderHook(() => useJobs({ type: 'contract' }), { wrapper })
+
+    await waitFor(() => expect(result.current.status).toBe('ready'))
+    if (result.current.status === 'ready') {
+      expect(result.current.jobs.map(j => j.id)).toEqual(['2'])
+    }
+  })
+
   it('surfaces a typed error state when the request fails', async () => {
     fetchMock.mockRejectedValue(new Error('offline'))
 
