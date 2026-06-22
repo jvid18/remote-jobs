@@ -1,5 +1,6 @@
 import { FlatList, Text, View } from 'react-native'
 
+import type { FavoriteSnapshot } from '@/modules/favorites/favorites-store'
 import { useFavoriteSnapshots } from '@/modules/favorites/hooks/use-favorites'
 import { makeStyles } from '@/shared/theme/make-styles'
 import { Screen } from '@/shared/ui/screen'
@@ -16,6 +17,11 @@ export function FavoritesScreen({ onOpenJob, onBrowse }: FavoritesScreenProps) {
   const styles = useStyles()
   const favorites = useFavoriteSnapshots()
 
+  const keyExtractor = (favorite: FavoriteSnapshot) => favorite.id
+  const renderItem = ({ item }: { item: FavoriteSnapshot }) => (
+    <FavoriteCard favorite={item} onPress={() => onOpenJob(item.id)} />
+  )
+
   return (
     <Screen>
       <View style={styles.header}>
@@ -31,10 +37,8 @@ export function FavoritesScreen({ onOpenJob, onBrowse }: FavoritesScreenProps) {
       ) : (
         <FlatList
           data={favorites}
-          keyExtractor={favorite => favorite.id}
-          renderItem={({ item }) => (
-            <FavoriteCard favorite={item} onPress={() => onOpenJob(item.id)} />
-          )}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
           contentContainerStyle={styles.list}
         />
       )}

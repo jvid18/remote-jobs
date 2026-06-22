@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
+import { memo } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 import { useIsFavorite, useToggleFavorite } from '@/modules/favorites/hooks/use-favorites'
@@ -14,10 +15,12 @@ import type { Job } from '../job'
 
 type JobCardProps = {
   job: Job
-  onPress: () => void
+  // Receives the id so the list can pass one stable handler to every row, keeping
+  // the memoized card from re-rendering on each parent render.
+  onPress: (id: string) => void
 }
 
-export function JobCard({ job, onPress }: JobCardProps) {
+function JobCardView({ job, onPress }: JobCardProps) {
   const styles = useStyles()
   const theme = useTheme()
   const isFavorite = useIsFavorite(job.id)
@@ -27,7 +30,7 @@ export function JobCard({ job, onPress }: JobCardProps) {
   return (
     <View style={styles.card}>
       <Pressable
-        onPress={onPress}
+        onPress={() => onPress(job.id)}
         accessibilityRole="button"
         accessibilityLabel={`${job.title} at ${job.companyName}`}
         style={styles.content}
@@ -71,6 +74,10 @@ export function JobCard({ job, onPress }: JobCardProps) {
     </View>
   )
 }
+
+// Rows are static unless their own job/favorite state changes; memo skips the
+// re-render the list triggers on refresh, search debounce or refreshing toggles.
+export const JobCard = memo(JobCardView)
 
 const useStyles = makeStyles(t => ({
   card: {

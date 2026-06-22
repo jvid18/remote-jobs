@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, Pressable, RefreshControl, Text, View } from 'react-native'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FlatList, type ListRenderItem, Pressable, RefreshControl, Text, View } from 'react-native'
 
 import { useCategories } from '@/modules/jobs/hooks/use-categories'
 import { useJobs } from '@/modules/jobs/hooks/use-jobs'
-import type { JobType } from '@/modules/jobs/job'
+import type { Job, JobType } from '@/modules/jobs/job'
 import type { JobQuery } from '@/modules/jobs/job-catalog'
 import { CategoryChips } from '@/modules/jobs/ui/category-chips'
 import { JobCard } from '@/modules/jobs/ui/job-card'
@@ -58,8 +58,18 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
     setType(null)
   }
 
-  // App name, search and category chips stay pinned so search and category are usable at
-  // any scroll position — favouring function over reclaiming the space on scroll.
+  // Stable references so memoized JobCards skip re-rendering on every list update.
+  const keyExtractor = useCallback((job: Job) => job.id, [])
+  const renderItem = useCallback<ListRenderItem<Job>>(
+    ({ item }) => (
+      <View style={styles.cardWrap}>
+        <JobCard job={item} onPress={onOpenJob} />
+      </View>
+    ),
+    [styles.cardWrap, onOpenJob],
+  )
+
+  // App name, search and category chips stay pinned on top
   const pinnedBar = (
     <View>
       <Text style={styles.wordmark}>RemoteJobs</Text>
@@ -131,12 +141,8 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
         <FlatList
           ref={listRef}
           data={jobs.jobs}
-          keyExtractor={job => job.id}
-          renderItem={({ item }) => (
-            <View style={styles.cardWrap}>
-              <JobCard job={item} onPress={() => onOpenJob(item.id)} />
-            </View>
-          )}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
           ListHeaderComponent={scrollHeader}
           contentContainerStyle={styles.listContent}
           keyboardShouldPersistTaps="handled"
