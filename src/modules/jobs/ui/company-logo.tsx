@@ -1,4 +1,6 @@
-import { Image, Text, View } from 'react-native'
+import { Image } from 'expo-image'
+import { useState } from 'react'
+import { Text, View } from 'react-native'
 
 import { getCategoryColor } from '@/shared/theme/category-colors'
 import { makeStyles } from '@/shared/theme/make-styles'
@@ -16,20 +18,25 @@ type CompanyLogoProps = {
 // Decorative either way — hidden from assistive tech (the card label names the job).
 export function CompanyLogo({ uri, companyName, category, size = 50 }: CompanyLogoProps) {
   const styles = useStyles()
+  const [imgError, setImgError] = useState(false)
   const dims = { width: size, height: size, borderRadius: size * 0.3 }
+  const { bg, fg } = getCategoryColor(category)
 
-  if (uri) {
+  if (uri && !imgError) {
     return (
-      <Image
-        source={{ uri }}
-        style={[styles.image, dims]}
-        accessibilityIgnoresInvertColors
-        importantForAccessibility="no"
-      />
+      <View style={[styles.imageContainer, dims]} importantForAccessibility="no">
+        <Image
+          source={{ uri }}
+          style={styles.image}
+          contentFit="contain"
+          accessibilityIgnoresInvertColors
+          importantForAccessibility="no"
+          onError={() => setImgError(true)}
+        />
+      </View>
     )
   }
 
-  const { bg, fg } = getCategoryColor(category)
   return (
     <View style={[styles.fallback, dims, { backgroundColor: bg }]} importantForAccessibility="no">
       <Text style={[styles.initial, { color: fg, fontSize: size * 0.42 }]}>
@@ -40,7 +47,12 @@ export function CompanyLogo({ uri, companyName, category, size = 50 }: CompanyLo
 }
 
 const useStyles = makeStyles(t => ({
-  image: { backgroundColor: t.color.surfaceMuted },
+  imageContainer: {
+    backgroundColor: t.color.surface,
+    overflow: 'hidden',
+    padding: 4,
+  },
+  image: { flex: 1, width: '100%', height: '100%' },
   fallback: { alignItems: 'center', justifyContent: 'center' },
   initial: { fontWeight: t.font.weight.extrabold },
 }))
