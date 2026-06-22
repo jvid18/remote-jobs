@@ -17,11 +17,11 @@ type JobDetailScreenProps = {
 export function JobDetailScreen({ id, onBack }: JobDetailScreenProps) {
   const styles = useStyles()
   const theme = useTheme()
-  const { job, loading } = useJob(id)
+  const state = useJob(id)
   const isSaved = useIsFavorite(id)
   const removeFavorite = useRemoveFavorite()
 
-  if (loading) {
+  if (state.status === 'loading') {
     return (
       <Screen>
         <View style={styles.center}>
@@ -31,7 +31,21 @@ export function JobDetailScreen({ id, onBack }: JobDetailScreenProps) {
     )
   }
 
-  if (!job) {
+  // A fetch failure must not masquerade as a removed job — offer a retry instead.
+  if (state.status === 'error') {
+    return (
+      <Screen>
+        <StatusView
+          tone="error"
+          title="Couldn't load this job"
+          message="Check your connection and try again."
+          action={{ label: 'Try again', onPress: state.retry }}
+        />
+      </Screen>
+    )
+  }
+
+  if (state.status === 'not-found') {
     // A saved job that has dropped off Remotive's list still has a snapshot, but
     // no live data to render. Offer to clean it up instead of a dead end.
     const removeAndLeave = () => {
@@ -59,7 +73,7 @@ export function JobDetailScreen({ id, onBack }: JobDetailScreenProps) {
 
   return (
     <Screen>
-      <JobDetailContent job={job} onBack={onBack} />
+      <JobDetailContent job={state.job} onBack={onBack} />
     </Screen>
   )
 }

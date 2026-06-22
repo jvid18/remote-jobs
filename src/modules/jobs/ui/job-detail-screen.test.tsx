@@ -56,6 +56,14 @@ describe('JobDetailScreen', () => {
     expect(screen.getByText('Go back')).toBeOnTheScreen()
   })
 
+  it('shows a retryable error when the fetch fails', async () => {
+    global.fetch = jest.fn(() => Promise.reject(new Error('offline'))) as unknown as typeof fetch
+    render(<JobDetailScreen id="5" onBack={jest.fn()} />, { wrapper })
+
+    await waitFor(() => expect(screen.getByText("Couldn't load this job")).toBeOnTheScreen())
+    expect(screen.getByText('Try again')).toBeOnTheScreen()
+  })
+
   it('offers to remove a saved job that is no longer available', async () => {
     mockJobs([])
     useFavoritesStore.setState({
