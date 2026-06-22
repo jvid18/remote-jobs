@@ -86,7 +86,7 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
           style={styles.wordmarkIcon}
           resizeMode="cover"
         />
-        <Text style={styles.wordmark}>RemoteJobs</Text>
+        <Text style={styles.wordmark}>Remote Jobs</Text>
       </View>
       <View style={styles.searchRow}>
         <SearchBar
