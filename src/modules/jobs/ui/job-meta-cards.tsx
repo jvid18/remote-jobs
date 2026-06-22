@@ -67,8 +67,6 @@ const useStyles = makeStyles(t => ({
   card: {
     flex: 1,
     backgroundColor: t.color.surfaceMuted,
-    borderWidth: 1,
-    borderColor: t.color.borderSubtle,
     borderRadius: t.radius.lg,
     paddingVertical: 16,
     paddingHorizontal: 10,

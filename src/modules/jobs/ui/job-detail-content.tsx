@@ -71,15 +71,14 @@ export function JobDetailContent({ job, onBack }: { job: Job; onBack: () => void
             <Text style={styles.company}>{job.companyName}</Text>
             <View style={styles.dot} />
             <Text style={styles.location}>{job.location}</Text>
+            <View style={styles.dot} />
+            <Text style={styles.location}>{relativeDate(job.publishedAt)}</Text>
           </View>
+
+          <View style={styles.heroBg} />
         </View>
 
         <JobMetaCards job={job} />
-
-        <View style={styles.postedRow}>
-          <Ionicons name="time-outline" size={15} color={theme.color.textFaint} />
-          <Text style={styles.posted}>Posted {relativeDate(job.publishedAt)}</Text>
-        </View>
 
         <Text style={styles.sectionTitle}>Job Description</Text>
         <DescriptionRenderer ast={job.description} />
@@ -133,7 +132,17 @@ const useStyles = makeStyles(t => ({
     justifyContent: 'center',
   },
   scroll: { paddingHorizontal: t.spacing.xl, paddingBottom: 26 },
-  hero: { alignItems: 'center', paddingTop: 18 },
+  hero: { alignItems: 'center', paddingTop: 18, position: 'relative' },
+  heroBg: {
+    position: 'absolute',
+    borderRadius: t.radius.md,
+    top: 60,
+    bottom: -10,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fafafa',
+    zIndex: -1,
+  },
   title: {
     fontSize: t.font.size.h2,
     fontWeight: t.font.weight.extrabold,
@@ -154,23 +163,12 @@ const useStyles = makeStyles(t => ({
     fontWeight: t.font.weight.medium,
     color: t.color.textMuted,
   },
-  postedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 18,
-    marginBottom: 20,
-  },
-  posted: {
-    fontSize: t.font.size.footnote,
-    fontWeight: t.font.weight.semibold,
-    color: t.color.textMuted,
-  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: t.font.weight.extrabold,
     color: t.color.textPrimary,
     marginBottom: 14,
+    marginTop: 28,
   },
   bottomBar: {
     flexDirection: 'row',
