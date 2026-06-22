@@ -31,7 +31,14 @@ function mockJobs(jobs: Record<string, unknown>[]) {
 }
 
 describe('JobDetailScreen', () => {
-  beforeEach(() => useFavoritesStore.setState({ byId: {} }))
+  beforeEach(() => {
+    jest.useFakeTimers()
+    useFavoritesStore.setState({ byId: {} })
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
 
   it('loads the job from the catalog and shows it', async () => {
     mockJobs([rawJob({ id: 5 })])

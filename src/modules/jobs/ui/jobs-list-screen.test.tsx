@@ -46,7 +46,14 @@ function mockApi(jobs: Record<string, unknown>[]) {
 }
 
 describe('JobsListScreen', () => {
-  beforeEach(() => useFavoritesStore.setState({ byId: {} }))
+  beforeEach(() => {
+    jest.useFakeTimers()
+    useFavoritesStore.setState({ byId: {} })
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
 
   it('shows skeletons while loading, then the jobs', async () => {
     mockApi([rawJob({ id: 1 })])
