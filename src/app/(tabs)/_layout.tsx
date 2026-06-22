@@ -10,6 +10,7 @@ import TabBarBackground from '@/shared/ui/tab-bar-background'
 export default function TabLayout() {
   const theme = useTheme()
   const favoriteCount = useFavoriteCount()
+  const tabBarBadge = favoriteCount === 0 ? undefined : favoriteCount > 99 ? '99+' : favoriteCount
 
   return (
     <Tabs
@@ -38,8 +39,11 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'heart' : 'heart-outline'} size={24} color={color} />
           ),
-          tabBarBadge: favoriteCount > 0 ? favoriteCount : undefined,
-          tabBarBadgeStyle: { backgroundColor: theme.color.favorite },
+          tabBarBadge: tabBarBadge,
+          tabBarBadgeStyle: {
+            backgroundColor: theme.color.favorite,
+            fontSize: 10,
+          },
         }}
       />
     </Tabs>
