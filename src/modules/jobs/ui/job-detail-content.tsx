@@ -140,7 +140,8 @@ const useStyles = makeStyles(t => ({
     bottom: -10,
     left: 0,
     right: 0,
-    backgroundColor: '#fafafa',
+    backgroundColor: t.color.surfaceMuted,
+    opacity: 0.5,
     zIndex: -1,
   },
   title: {
@@ -185,6 +186,7 @@ const useStyles = makeStyles(t => ({
     width: 56,
     height: 56,
     borderRadius: t.radius.lg,
+    backgroundColor: t.color.surface,
     borderWidth: 1.5,
     borderColor: t.color.border,
     alignItems: 'center',
