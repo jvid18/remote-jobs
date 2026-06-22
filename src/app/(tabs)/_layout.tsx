@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
 import { Platform } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useFavoriteCount } from '@/modules/favorites/hooks/use-favorites'
 import { useTheme } from '@/shared/theme/use-theme'
@@ -10,10 +11,12 @@ import TabBarBackground from '@/shared/ui/tab-bar-background'
 export default function TabLayout() {
   const theme = useTheme()
   const favoriteCount = useFavoriteCount()
+  const { bottom } = useSafeAreaInsets()
   const tabBarBadge = favoriteCount === 0 ? undefined : favoriteCount > 99 ? '99+' : favoriteCount
 
   return (
     <Tabs
+      safeAreaInsets={{ bottom: bottom > 0 ? 20 : 0 }}
       screenOptions={{
         tabBarActiveTintColor: theme.color.primary,
         tabBarInactiveTintColor: theme.color.textMuted,
