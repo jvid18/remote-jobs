@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { Pressable, Text, View } from 'react-native'
 
 import { useIsFavorite, useToggleFavorite } from '@/modules/favorites/hooks/use-favorites'
+import { FavoriteHeartButton } from '@/modules/favorites/ui/favorite-heart-button'
 import { categoryShortLabel, jobTypeLabel, relativeDate } from '@/shared/lib/job-format'
 import { getCategoryColor } from '@/shared/theme/category-colors'
 import { makeStyles } from '@/shared/theme/make-styles'
@@ -61,20 +62,12 @@ export function JobCard({ job, onPress }: JobCardProps) {
         </View>
       </Pressable>
 
-      <Pressable
+      <FavoriteHeartButton
+        active={isFavorite}
         onPress={() => toggleFavorite(job)}
-        accessibilityRole="button"
         accessibilityLabel={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
-        accessibilityState={{ selected: isFavorite }}
-        hitSlop={8}
-        style={[styles.heart, isFavorite && styles.heartActive]}
-      >
-        <Ionicons
-          name={isFavorite ? 'heart' : 'heart-outline'}
-          size={19}
-          color={isFavorite ? theme.color.favorite : theme.color.textFaint}
-        />
-      </Pressable>
+        style={styles.heart}
+      />
     </View>
   )
 }
@@ -103,18 +96,7 @@ const useStyles = makeStyles(t => ({
     color: t.color.textPrimary,
     lineHeight: 21,
   },
-  heart: {
-    position: 'absolute',
-    top: 18,
-    right: 18,
-    width: 38,
-    height: 38,
-    borderRadius: t.radius.md,
-    backgroundColor: t.color.surfaceMuted,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heartActive: { backgroundColor: t.color.dangerSurface },
+  heart: { position: 'absolute', top: 18, right: 18 },
   locationRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 13 },
   location: {
     fontSize: t.font.size.footnote,
