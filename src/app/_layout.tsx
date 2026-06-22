@@ -11,6 +11,7 @@ import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-c
 
 import { useColorScheme } from '@/shared/hooks/use-color-scheme'
 import { SWRProvider } from '@/shared/http/swr-provider'
+import { ErrorBoundary } from '@/shared/ui/error-boundary'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -37,11 +38,13 @@ export default function RootLayout() {
         <SWRProvider>
           <BottomSheetModalProvider>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="jobs/[id]" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-              </Stack>
+              <ErrorBoundary>
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="jobs/[id]" options={{ headerShown: false }} />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+              </ErrorBoundary>
               <StatusBar style="auto" />
             </ThemeProvider>
           </BottomSheetModalProvider>
