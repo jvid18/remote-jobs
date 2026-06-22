@@ -1,50 +1,69 @@
-# Welcome to your Expo app 👋
+# Remote Jobs
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Browse remote job listings powered by [Remotive](https://remotive.com). Built with Expo (SDK 52) and Expo Router.
 
-## Get started
+## Try it
 
-1. Install dependencies
+Scan with **Expo Go** to preview the latest build:
 
-   ```bash
-   npm install
-   ```
+<p align="center">
+  <a href="exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac">
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac"
+      alt="Open in Expo Go"
+      width="160"
+    />
+  </a>
+</p>
 
-2. Start the app
+Or open directly: [`exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac`](exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac)
 
-   ```bash
-    npx expo start
-   ```
+EAS dashboard: [remote-jobs @ expo.dev](https://expo.dev/accounts/jvid/projects/remote-jobs/updates/aaf18a5f-5871-4e75-add2-a804cdee45bc)
 
-In the output, you'll find options to open the app in a
+## Requirements
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node 20+
+- pnpm 11 — see [Why pnpm?](#why-pnpm) below
+- Expo Go on your device, or an iOS simulator / Android emulator
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Setup
 
 ```bash
-npm run reset-project
+# install dependencies
+pnpm install
+
+# start the dev server
+pnpm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Then press `i` for iOS simulator, `a` for Android emulator, or scan the QR with Expo Go.
 
-## Learn more
+## Why pnpm?
 
-To learn more about developing your project with Expo, look at the following resources:
+This project uses **pnpm 11**. Two reasons:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. **Disk efficiency** — pnpm stores packages in a global content-addressable cache and hard-links them into `node_modules`. A clean install on a machine that already has the cache costs almost nothing.
 
-## Join the community
+2. **Supply-chain security** — pnpm 11 restricts lifecycle scripts by default. Packages can only run `postinstall` and similar scripts if they are explicitly listed in `pnpm.onlyBuiltDependencies` (in `package.json`) or approved via `pnpm.ignoredBuiltDependencies`. This blocks the most common vector for malicious packages to execute arbitrary code on install. npm and yarn run every package's lifecycle scripts unconditionally.
 
-Join our community of developers creating universal apps.
+Do not substitute `npm install` or `yarn` — the lockfile format is incompatible and you will lose the security guarantees above.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Scripts
+
+| Command | Description |
+|---|---|
+| `pnpm start` | Start Expo dev server |
+| `pnpm android` | Open on Android emulator |
+| `pnpm ios` | Open on iOS simulator |
+| `pnpm test` | Run Jest test suite |
+| `pnpm lint` | Run ESLint |
+
+## Publishing updates
+
+Updates are published via EAS Update:
+
+```bash
+eas update --branch main --message "your message"
+```
+
+Any device running the app via Expo Go will pick up the update on next launch.
