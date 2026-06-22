@@ -1,50 +1,72 @@
-# Welcome to your Expo app 👋
+# Remote Jobs
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Technical challenge submission for Redarbor — React Native Developer.
 
-## Get started
+Remote job listing app with search, detail view, and favorites, powered by the [Remotive public API](https://remotive.com/api/remote-jobs).
 
-1. Install dependencies
+**Stack:** Expo 52 · React Native · TypeScript · Expo Router · Zustand · SWR
 
-   ```bash
-   npm install
-   ```
+Zustand manages favorites state (persisted via AsyncStorage). SWR handles all remote data fetching — the built-in caching, automatic retry, and background revalidation made it a better fit for that layer than a manual Zustand store would have been.
 
-2. Start the app
+---
 
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Running locally
 
 ```bash
-npm run reset-project
+pnpm install
+pnpm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Press `i` for iOS simulator, `a` for Android emulator, or scan the QR with Expo Go.
 
-## Learn more
+I used [pnpm](https://pnpm.io/installation) throughout the project — mainly for the security guarantees it gives around lifecycle scripts. npm or yarn should work too, just know you'd be bypassing the lockfile.
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Preview via Expo Go
 
-## Join the community
+> **SDK 52 only.** Expo Go is version-locked — if your installed version targets SDK 53 or 54 this won't load. Check by opening Expo Go → Profile and looking for the SDK version. If it doesn't say 52, running locally is the way to go.
 
-Join our community of developers creating universal apps.
+<p align="center">
+  <a href="exp://u.expo.dev/235cc82d-96e8-4efc-b23d-98ebfc4e33ac?channel-name=preview">
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=exp%3A%2F%2Fu.expo.dev%2F235cc82d-96e8-4efc-b23d-98ebfc4e33ac%3Fchannel-name%3Dpreview"
+      alt="Open in Expo Go"
+      width="160"
+    />
+  </a>
+</p>
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Scan from inside the Expo Go app.
+
+---
+
+## Structure
+
+```
+src/
+  app/          # Expo Router routes
+  modules/
+    jobs/       # listing, detail, search, filters
+    favorites/  # favorites persisted with AsyncStorage
+  shared/       # theme, shared components, common hooks
+docs/
+  adr/          # architecture decision records
+```
+
+---
+
+## Architecture decisions
+
+| Decision                                  | Doc                                            |
+| ----------------------------------------- | ---------------------------------------------- |
+| Result pattern for async error handling   | [ADR-001](docs/adr/001-result-pattern.md)      |
+| Agnostic domain and anti-corruption layer | [ADR-002](docs/adr/002-agnostic-domain.md)     |
+| Filter intermediary                       | [ADR-003](docs/adr/003-filter-intermediary.md) |
+| General structure and architecture        | [ARCHITECTURE.md](docs/ARCHITECTURE.md)        |
+
+---
+
+## Note: Android 16KB page size warning
+
+Native Android builds may show a 16 KB memory page alignment warning. This is a known issue in React Native 0.76 / Expo SDK 52. The project uses Expo SDK 52 because it is a requirement of the technical assessment. Newer Expo SDK versions address this limitation, but upgrading is outside the scope of the exercise.
