@@ -2,14 +2,14 @@ import { Ionicons } from '@expo/vector-icons'
 import { Pressable, Text, View } from 'react-native'
 
 import { useIsFavorite, useToggleFavorite } from '@/modules/favorites/hooks/use-favorites'
+import { categoryShortLabel, jobTypeLabel, relativeDate } from '@/shared/lib/job-format'
 import { getCategoryColor } from '@/shared/theme/category-colors'
 import { makeStyles } from '@/shared/theme/make-styles'
 import { useTheme } from '@/shared/theme/use-theme'
+import { CompanyLogo } from '@/shared/ui/company-logo'
 import { Tag } from '@/shared/ui/tag'
 
 import type { Job } from '../job'
-import { CompanyLogo } from './company-logo'
-import { categoryShortLabel, jobTypeLabel, relativeDate } from './job-presentation'
 
 type JobCardProps = {
   job: Job

@@ -3,14 +3,14 @@ import * as WebBrowser from 'expo-web-browser'
 import { Pressable, ScrollView, Share, Text, View } from 'react-native'
 
 import { useIsFavorite, useToggleFavorite } from '@/modules/favorites/hooks/use-favorites'
+import { relativeDate } from '@/shared/lib/job-format'
 import { makeStyles } from '@/shared/theme/make-styles'
 import { useTheme } from '@/shared/theme/use-theme'
+import { CompanyLogo } from '@/shared/ui/company-logo'
 
 import type { Job } from '../job'
-import { CompanyLogo } from './company-logo'
 import { DescriptionRenderer } from './description-renderer'
 import { JobMetaCards } from './job-meta-cards'
-import { relativeDate } from './job-presentation'
 
 type IconButtonProps = {
   icon: keyof typeof Ionicons.glyphMap

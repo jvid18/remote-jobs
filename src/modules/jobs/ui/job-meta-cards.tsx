@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Text, View } from 'react-native'
 
+import { categoryShortLabel, jobTypeLabel } from '@/shared/lib/job-format'
 import { makeStyles } from '@/shared/theme/make-styles'
 import { useTheme } from '@/shared/theme/use-theme'
 
 import type { Job } from '../job'
-import { categoryShortLabel, jobTypeLabel } from './job-presentation'
 
 type MetaCardProps = {
   icon: keyof typeof Ionicons.glyphMap

@@ -1,10 +1,10 @@
-import { JOB_TYPES } from '@/modules/jobs/job'
 import {
   categoryShortLabel,
   companyInitial,
   jobTypeLabel,
   relativeDate,
-} from '@/modules/jobs/ui/job-presentation'
+} from '@/shared/lib/job-format'
+import { JOB_TYPES } from '@/shared/lib/job-types'
 
 describe('jobTypeLabel', () => {
   it('humanizes a known type', () => {

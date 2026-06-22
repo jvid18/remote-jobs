@@ -8,12 +8,12 @@ import { forwardRef, type MutableRefObject, useCallback, useRef } from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { jobTypeLabel } from '@/shared/lib/job-format'
 import { makeStyles } from '@/shared/theme/make-styles'
 import { useTheme } from '@/shared/theme/use-theme'
 import { Chip } from '@/shared/ui/chip'
 
 import { JOB_TYPES, type JobType } from '../job'
-import { jobTypeLabel } from './job-presentation'
 
 const TYPES: JobType[] = [
   JOB_TYPES.FULL_TIME,

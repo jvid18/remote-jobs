@@ -2,10 +2,9 @@ import { Image } from 'expo-image'
 import { useState } from 'react'
 import { Text, View } from 'react-native'
 
+import { companyInitial } from '@/shared/lib/job-format'
 import { getCategoryColor } from '@/shared/theme/category-colors'
 import { makeStyles } from '@/shared/theme/make-styles'
-
-import { companyInitial } from './job-presentation'
 
 type CompanyLogoProps = {
   uri: string | null

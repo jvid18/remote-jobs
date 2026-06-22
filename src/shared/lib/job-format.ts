@@ -1,4 +1,4 @@
-import { JOB_TYPES, type JobType } from '@/modules/jobs/job'
+import { JOB_TYPES, type JobType } from '@/shared/lib/job-types'
 
 const TYPE_LABELS: Record<JobType, string> = {
   [JOB_TYPES.FULL_TIME]: 'Full-time',
