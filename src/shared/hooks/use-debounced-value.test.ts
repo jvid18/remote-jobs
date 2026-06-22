@@ -7,9 +7,12 @@ describe('useDebouncedValue', () => {
   afterEach(() => jest.useRealTimers())
 
   it('returns the latest value only after the delay elapses', () => {
-    const { result, rerender } = renderHook(({ value }) => useDebouncedValue(value, 300), {
-      initialProps: { value: 'a' },
-    })
+    const { result, rerender } = renderHook(
+      ({ value }: { value: string }) => useDebouncedValue(value, 300),
+      {
+        initialProps: { value: 'a' },
+      },
+    )
     expect(result.current).toBe('a')
 
     rerender({ value: 'ab' })

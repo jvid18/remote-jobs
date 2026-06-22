@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { AccessibilityInfo, Animated, View } from 'react-native'
 
 import { makeStyles } from '@/shared/theme/make-styles'
@@ -8,20 +8,23 @@ const PLACEHOLDERS = [0, 1, 2, 3]
 export function JobsSkeleton() {
   const styles = useStyles()
   const opacity = useMemo(() => new Animated.Value(0.5), [])
+  const animation = useRef<Animated.CompositeAnimation | null>(null)
 
   useEffect(() => {
     let cancelled = false
     AccessibilityInfo.isReduceMotionEnabled().then(reduced => {
       if (cancelled || reduced) return
-      Animated.loop(
+      animation.current = Animated.loop(
         Animated.sequence([
           Animated.timing(opacity, { toValue: 1, duration: 600, useNativeDriver: true }),
           Animated.timing(opacity, { toValue: 0.5, duration: 600, useNativeDriver: true }),
         ]),
-      ).start()
+      )
+      animation.current.start()
     })
     return () => {
       cancelled = true
+      animation.current?.stop()
     }
   }, [opacity])
 
