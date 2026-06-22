@@ -3,10 +3,7 @@
 Conventions and their rationale live in `docs/` — read them before changing code, don't restate them here.
 
 - Architecture, folder layout, type design in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- Decisions:
-  - [ADR-001 Result pattern](docs/adr/001-result-pattern.md)
-  - [ADR-002 Agnostic domain](docs/adr/002-agnostic-domain.md)
-  - [ADR-003 Client-side filter](docs/adr/003-filter-intermediary.md)
+- Decisions in [docs/adr/](docs/adr/README.md)
 
 ## Gotchas (non-obvious, easy to get wrong)
 
