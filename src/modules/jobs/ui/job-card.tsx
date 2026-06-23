@@ -59,14 +59,15 @@ function JobCardView({ job, onPress }: JobCardProps) {
         </View>
 
         <View style={styles.metaRow}>
-          <Tag
-            label={categoryShortLabel(job.category)}
-            bg={category.bg}
-            fg={category.fg}
-            style={styles.tag}
-            numberOfLines={1}
-          />
-          <Tag label={jobTypeLabel(job.type)} style={styles.tag} numberOfLines={1} />
+          <View style={styles.tags}>
+            <Tag
+              label={categoryShortLabel(job.category)}
+              bg={category.bg}
+              fg={category.fg}
+              numberOfLines={1}
+            />
+            <Tag label={jobTypeLabel(job.type)} numberOfLines={1} />
+          </View>
           <Text style={styles.date}>{relativeDate(job.publishedAt)}</Text>
         </View>
       </Pressable>
@@ -116,13 +117,14 @@ const useStyles = makeStyles(t => ({
     fontWeight: t.font.weight.medium,
     color: t.color.textMuted,
   },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14 },
-  tag: { maxWidth: 100 },
+  metaRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginTop: 14 },
+  tags: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   date: {
-    marginLeft: 'auto',
+    flexShrink: 0,
+    marginTop: 4,
     fontSize: t.font.size.caption,
     fontWeight: t.font.weight.semibold,
     color: t.color.textFaint,
-    flexShrink: 0,
+    textAlign: 'right',
   },
 }))
