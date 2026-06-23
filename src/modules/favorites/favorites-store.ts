@@ -2,7 +2,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-import type { Job, JobType } from '@/modules/jobs/job'
+import type { JobType } from '@/shared/lib/job-types'
+
+// Input accepted by the store; kept inside the module so favorites never
+// depends on the jobs module's domain type.
+export type FavoriteInput = {
+  id: string
+  title: string
+  companyName: string
+  companyLogoUrl: string | null
+  category: string
+  location: string
+  type: JobType | null
+  publishedAt: Date
+}
 
 export type FavoriteSnapshot = {
   id: string
@@ -17,11 +30,11 @@ export type FavoriteSnapshot = {
 
 type FavoritesState = {
   byId: Record<string, FavoriteSnapshot>
-  toggle: (job: Job) => void
+  toggle: (job: FavoriteInput) => void
   remove: (id: string) => void
 }
 
-function toSnapshot(job: Job): FavoriteSnapshot {
+function toSnapshot(job: FavoriteInput): FavoriteSnapshot {
   return {
     id: job.id,
     title: job.title,

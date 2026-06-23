@@ -1,7 +1,8 @@
-import { useFavoritesStore } from '@/modules/favorites/favorites-store'
-import { JOB_TYPES, type Job } from '@/modules/jobs/job'
+import { JOB_TYPES } from '@/shared/lib/job-types'
 
-const makeJob = (over: Partial<Job> = {}): Job => ({
+import { type FavoriteInput, useFavoritesStore } from './favorites-store'
+
+const makeJob = (over: Partial<FavoriteInput> & Record<string, unknown> = {}): FavoriteInput => ({
   id: '1',
   title: 'Frontend Engineer',
   companyName: 'Acme',
@@ -10,9 +11,6 @@ const makeJob = (over: Partial<Job> = {}): Job => ({
   type: JOB_TYPES.FULL_TIME,
   location: 'Worldwide',
   publishedAt: new Date('2026-06-01T00:00:00Z'),
-  salary: { kind: 'unspecified' },
-  applyUrl: 'https://x',
-  description: [],
   ...over,
 })
 

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   FlatList,
   Image,
@@ -28,9 +28,11 @@ import { StatusView } from '@/shared/ui/status-view'
 
 type JobsListScreenProps = {
   onOpenJob: (id: string) => void
+  // Injected from the routing layer so the jobs module stays independent of favorites.
+  renderFavoriteButton?: (job: Job) => ReactNode
 }
 
-export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
+export function JobsListScreen({ onOpenJob, renderFavoriteButton }: JobsListScreenProps) {
   const styles = useStyles()
   const theme = useTheme()
 
@@ -71,10 +73,10 @@ export function JobsListScreen({ onOpenJob }: JobsListScreenProps) {
   const renderItem = useCallback<ListRenderItem<Job>>(
     ({ item }) => (
       <View style={styles.cardWrap}>
-        <JobCard job={item} onPress={onOpenJob} />
+        <JobCard job={item} onPress={onOpenJob} favoriteButton={renderFavoriteButton?.(item)} />
       </View>
     ),
-    [styles.cardWrap, onOpenJob],
+    [styles.cardWrap, onOpenJob, renderFavoriteButton],
   )
 
   // App name, search and category chips stay pinned on top

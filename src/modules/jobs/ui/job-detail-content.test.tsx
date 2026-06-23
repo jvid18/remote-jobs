@@ -1,8 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native'
 import * as WebBrowser from 'expo-web-browser'
-import { Share } from 'react-native'
+import { Share, Text } from 'react-native'
 
-import { useFavoritesStore } from '@/modules/favorites/favorites-store'
 import { JOB_TYPES, type Job } from '@/modules/jobs/job'
 import { JobDetailContent } from '@/modules/jobs/ui/job-detail-content'
 
@@ -24,8 +23,6 @@ const makeJob = (over: Partial<Job> = {}): Job => ({
 })
 
 describe('JobDetailContent', () => {
-  beforeEach(() => useFavoritesStore.setState({ byId: {} }))
-
   it('shows the headline fields and description', () => {
     render(<JobDetailContent job={makeJob()} onBack={jest.fn()} />)
     expect(screen.getByText('Senior Frontend Engineer')).toBeOnTheScreen()
@@ -60,10 +57,15 @@ describe('JobDetailContent', () => {
     expect(spy).toHaveBeenCalled()
   })
 
-  it('toggles favorite from the action bar', () => {
-    render(<JobDetailContent job={makeJob({ id: 'fav-9' })} onBack={jest.fn()} />)
-    fireEvent.press(screen.getByRole('button', { name: 'Save to favorites' }))
-    expect(useFavoritesStore.getState().byId['fav-9']).toBeDefined()
+  it('renders the injected favorite button in the action bar', () => {
+    render(
+      <JobDetailContent
+        job={makeJob({ id: 'fav-9' })}
+        onBack={jest.fn()}
+        favoriteButton={<Text>Favorite</Text>}
+      />,
+    )
+    expect(screen.getByText('Favorite')).toBeOnTheScreen()
   })
 
   it('calls onBack', () => {

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react-native'
+import { Text } from 'react-native'
 
-import { useFavoritesStore } from '@/modules/favorites/favorites-store'
 import { JOB_TYPES, type Job } from '@/modules/jobs/job'
 import { JobCard } from '@/modules/jobs/ui/job-card'
 
@@ -20,8 +20,6 @@ const makeJob = (over: Partial<Job> = {}): Job => ({
 })
 
 describe('JobCard', () => {
-  beforeEach(() => useFavoritesStore.setState({ byId: {} }))
-
   it('shows the core job fields', () => {
     render(<JobCard job={makeJob()} onPress={jest.fn()} />)
     expect(screen.getByText('Senior Frontend Engineer')).toBeOnTheScreen()
@@ -37,13 +35,16 @@ describe('JobCard', () => {
     expect(onPress).toHaveBeenCalledTimes(1)
   })
 
-  it('toggles favorite and reflects the selected state', () => {
-    render(<JobCard job={makeJob({ id: 'fav-1' })} onPress={jest.fn()} />)
+  it('renders the injected favorite button', () => {
+    render(
+      <JobCard
+        job={makeJob({ id: 'fav-1' })}
+        onPress={jest.fn()}
+        favoriteButton={<Text>Favorite</Text>}
+      />,
+    )
 
-    fireEvent.press(screen.getByRole('button', { name: 'Save to favorites' }))
-
-    expect(useFavoritesStore.getState().byId['fav-1']).toBeDefined()
-    expect(screen.getByRole('button', { name: 'Remove from favorites' })).toBeOnTheScreen()
+    expect(screen.getByText('Favorite')).toBeOnTheScreen()
   })
 
   it('keeps the relative date visible even with long tags', () => {

@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons'
 import * as WebBrowser from 'expo-web-browser'
+import type { ReactNode } from 'react'
 import { Pressable, ScrollView, Share, Text, View } from 'react-native'
 
-import { useIsFavorite, useToggleFavorite } from '@/modules/favorites/hooks/use-favorites'
 import { relativeDate } from '@/shared/lib/job-format'
 import { makeStyles } from '@/shared/theme/make-styles'
 import { useTheme } from '@/shared/theme/use-theme'
@@ -35,11 +35,16 @@ function IconButton({ icon, label, onPress, tint }: IconButtonProps) {
   )
 }
 
-export function JobDetailContent({ job, onBack }: { job: Job; onBack: () => void }) {
+type JobDetailContentProps = {
+  job: Job
+  onBack: () => void
+  // Injected from the routing layer so the jobs module stays independent of favorites.
+  favoriteButton?: ReactNode
+}
+
+export function JobDetailContent({ job, onBack, favoriteButton }: JobDetailContentProps) {
   const styles = useStyles()
   const theme = useTheme()
-  const isFavorite = useIsFavorite(job.id)
-  const toggleFavorite = useToggleFavorite()
 
   const onApply = () => {
     void WebBrowser.openBrowserAsync(job.applyUrl)
@@ -103,19 +108,7 @@ export function JobDetailContent({ job, onBack }: { job: Job; onBack: () => void
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <Pressable
-          onPress={() => toggleFavorite(job)}
-          accessibilityRole="button"
-          accessibilityLabel={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
-          accessibilityState={{ selected: isFavorite }}
-          style={[styles.favSquare, isFavorite && styles.favSquareActive]}
-        >
-          <Ionicons
-            name={isFavorite ? 'heart' : 'heart-outline'}
-            size={23}
-            color={isFavorite ? theme.color.favorite : theme.color.textFaint}
-          />
-        </Pressable>
+        {favoriteButton ? <View style={styles.favSquare}>{favoriteButton}</View> : null}
         <Pressable
           onPress={onApply}
           accessibilityRole="button"
@@ -214,7 +207,6 @@ const useStyles = makeStyles(t => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  favSquareActive: { backgroundColor: t.color.dangerSurface },
   applyButton: {
     flex: 1,
     height: 56,

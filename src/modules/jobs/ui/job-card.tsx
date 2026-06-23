@@ -1,9 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
-import { memo } from 'react'
+import { memo, type ReactNode } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
-import { useIsFavorite, useToggleFavorite } from '@/modules/favorites/hooks/use-favorites'
-import { FavoriteHeartButton } from '@/modules/favorites/ui/favorite-heart-button'
 import { categoryShortLabel, jobTypeLabel, relativeDate } from '@/shared/lib/job-format'
 import { getCategoryColor } from '@/shared/theme/category-colors'
 import { makeStyles } from '@/shared/theme/make-styles'
@@ -18,13 +16,13 @@ type JobCardProps = {
   // Receives the id so the list can pass one stable handler to every row, keeping
   // the memoized card from re-rendering on each parent render.
   onPress: (id: string) => void
+  // Injected from the routing layer so the jobs module stays independent of favorites.
+  favoriteButton?: ReactNode
 }
 
-function JobCardView({ job, onPress }: JobCardProps) {
+function JobCardView({ job, onPress, favoriteButton }: JobCardProps) {
   const styles = useStyles()
   const theme = useTheme()
-  const isFavorite = useIsFavorite(job.id)
-  const toggleFavorite = useToggleFavorite()
   const category = getCategoryColor(job.category)
 
   return (
@@ -72,12 +70,7 @@ function JobCardView({ job, onPress }: JobCardProps) {
         </View>
       </Pressable>
 
-      <FavoriteHeartButton
-        active={isFavorite}
-        onPress={() => toggleFavorite(job)}
-        accessibilityLabel={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
-        style={styles.heart}
-      />
+      {favoriteButton ? <View style={styles.heart}>{favoriteButton}</View> : null}
     </View>
   )
 }

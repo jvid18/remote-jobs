@@ -1,25 +1,33 @@
 import { ActivityIndicator, View } from 'react-native'
 
-import { useIsFavorite, useRemoveFavorite } from '@/modules/favorites/hooks/use-favorites'
 import { makeStyles } from '@/shared/theme/make-styles'
 import { useTheme } from '@/shared/theme/use-theme'
 import { Screen } from '@/shared/ui/screen'
 import { StatusView } from '@/shared/ui/status-view'
 
 import { useJob } from '../hooks/use-job'
+import type { Job } from '../job'
 import { JobDetailContent } from './job-detail-content'
 
 type JobDetailScreenProps = {
   id: string
   onBack: () => void
+  // Injected from the routing layer so the jobs module stays independent of favorites.
+  renderFavoriteButton?: (job: Job) => React.ReactNode
+  isSaved?: boolean
+  onRemoveSavedFavorite?: () => void
 }
 
-export function JobDetailScreen({ id, onBack }: JobDetailScreenProps) {
+export function JobDetailScreen({
+  id,
+  onBack,
+  renderFavoriteButton,
+  isSaved,
+  onRemoveSavedFavorite,
+}: JobDetailScreenProps) {
   const styles = useStyles()
   const theme = useTheme()
   const state = useJob(id)
-  const isSaved = useIsFavorite(id)
-  const removeFavorite = useRemoveFavorite()
 
   if (state.status === 'loading') {
     return (
@@ -49,7 +57,7 @@ export function JobDetailScreen({ id, onBack }: JobDetailScreenProps) {
     // A saved job that has dropped off Remotive's list still has a snapshot, but
     // no live data to render. Offer to clean it up instead of a dead end.
     const removeAndLeave = () => {
-      removeFavorite(id)
+      onRemoveSavedFavorite?.()
       onBack()
     }
     return (
@@ -73,7 +81,11 @@ export function JobDetailScreen({ id, onBack }: JobDetailScreenProps) {
 
   return (
     <Screen>
-      <JobDetailContent job={state.job} onBack={onBack} />
+      <JobDetailContent
+        job={state.job}
+        onBack={onBack}
+        favoriteButton={renderFavoriteButton?.(state.job)}
+      />
     </Screen>
   )
 }

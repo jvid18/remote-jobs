@@ -2,7 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react-native'
 import type { ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 
-import { useFavoritesStore } from '@/modules/favorites/favorites-store'
 import { JobDetailScreen } from '@/modules/jobs/ui/job-detail-screen'
 
 jest.mock('expo-web-browser', () => ({ openBrowserAsync: jest.fn() }))
@@ -33,7 +32,6 @@ function mockJobs(jobs: Record<string, unknown>[]) {
 describe('JobDetailScreen', () => {
   beforeEach(() => {
     jest.useFakeTimers()
-    useFavoritesStore.setState({ byId: {} })
   })
 
   afterEach(() => {
@@ -66,21 +64,16 @@ describe('JobDetailScreen', () => {
 
   it('offers to remove a saved job that is no longer available', async () => {
     mockJobs([])
-    useFavoritesStore.setState({
-      byId: {
-        404: {
-          id: '404',
-          title: 'Gone Role',
-          companyName: 'Globex',
-          companyLogoUrl: null,
-          category: 'Software Development',
-          location: 'Europe',
-          type: 'full_time',
-          publishedAt: '2026-06-01T00:00:00.000Z',
-        },
-      },
-    })
-    render(<JobDetailScreen id="404" onBack={jest.fn()} />, { wrapper })
+    const onRemoveSavedFavorite = jest.fn()
+    render(
+      <JobDetailScreen
+        id="404"
+        onBack={jest.fn()}
+        isSaved={true}
+        onRemoveSavedFavorite={onRemoveSavedFavorite}
+      />,
+      { wrapper },
+    )
 
     await waitFor(() => expect(screen.getByText('Remove from favorites')).toBeOnTheScreen())
   })

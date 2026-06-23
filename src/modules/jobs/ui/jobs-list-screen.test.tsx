@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native'
 import type { ReactNode } from 'react'
+import { Text } from 'react-native'
 import { SWRConfig } from 'swr'
 
-import { useFavoritesStore } from '@/modules/favorites/favorites-store'
 import { JobsListScreen } from '@/modules/jobs/ui/jobs-list-screen'
 
 const wrapper = ({ children }: { children: ReactNode }) => (
@@ -48,7 +48,6 @@ function mockApi(jobs: Record<string, unknown>[]) {
 describe('JobsListScreen', () => {
   beforeEach(() => {
     jest.useFakeTimers()
-    useFavoritesStore.setState({ byId: {} })
   })
 
   afterEach(() => {
@@ -80,14 +79,15 @@ describe('JobsListScreen', () => {
     expect(screen.getByText('Backend Engineer')).toBeOnTheScreen()
   })
 
-  it('saves a job to favorites from the list', async () => {
+  it('renders favorite buttons provided by the caller', async () => {
     mockApi([rawJob({ id: 7, title: 'Frontend Engineer' })])
-    render(<JobsListScreen onOpenJob={jest.fn()} />, { wrapper })
+    render(
+      <JobsListScreen onOpenJob={jest.fn()} renderFavoriteButton={() => <Text>Favorite</Text>} />,
+      { wrapper },
+    )
 
     await waitFor(() => expect(screen.getByText('Frontend Engineer')).toBeOnTheScreen())
-    fireEvent.press(screen.getByRole('button', { name: 'Save to favorites' }))
-
-    expect(useFavoritesStore.getState().byId['7']).toBeDefined()
+    expect(screen.getByText('Favorite')).toBeOnTheScreen()
   })
 
   it('opens a job when its card is pressed', async () => {
