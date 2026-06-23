@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native'
+import { Text, View, type ViewStyle } from 'react-native'
 
 import { makeStyles } from '@/shared/theme/make-styles'
 
@@ -6,13 +6,24 @@ type TagProps = {
   label: string
   bg?: string
   fg?: string
+  style?: ViewStyle
+  numberOfLines?: number
+  testID?: string
 }
 
-export function Tag({ label, bg, fg }: TagProps) {
+export function Tag({ label, bg, fg, style, numberOfLines = 1, testID }: TagProps) {
   const styles = useStyles()
   return (
-    <View style={[styles.base, bg ? { backgroundColor: bg } : styles.defaultBg]}>
-      <Text style={[styles.label, fg ? { color: fg } : styles.defaultFg]}>{label}</Text>
+    <View
+      testID={testID}
+      style={[styles.base, bg ? { backgroundColor: bg } : styles.defaultBg, style]}
+    >
+      <Text
+        style={[styles.label, fg ? { color: fg } : styles.defaultFg]}
+        numberOfLines={numberOfLines}
+      >
+        {label}
+      </Text>
     </View>
   )
 }
