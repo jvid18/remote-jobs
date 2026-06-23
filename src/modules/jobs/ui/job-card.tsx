@@ -59,8 +59,14 @@ function JobCardView({ job, onPress }: JobCardProps) {
         </View>
 
         <View style={styles.metaRow}>
-          <Tag label={categoryShortLabel(job.category)} bg={category.bg} fg={category.fg} />
-          <Tag label={jobTypeLabel(job.type)} />
+          <Tag
+            label={categoryShortLabel(job.category)}
+            bg={category.bg}
+            fg={category.fg}
+            style={styles.tag}
+            numberOfLines={1}
+          />
+          <Tag label={jobTypeLabel(job.type)} style={styles.tag} numberOfLines={1} />
           <Text style={styles.date}>{relativeDate(job.publishedAt)}</Text>
         </View>
       </Pressable>
@@ -111,10 +117,12 @@ const useStyles = makeStyles(t => ({
     color: t.color.textMuted,
   },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 14 },
+  tag: { maxWidth: 100 },
   date: {
     marginLeft: 'auto',
     fontSize: t.font.size.caption,
     fontWeight: t.font.weight.semibold,
     color: t.color.textFaint,
+    flexShrink: 0,
   },
 }))

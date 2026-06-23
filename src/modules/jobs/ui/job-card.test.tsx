@@ -45,4 +45,18 @@ describe('JobCard', () => {
     expect(useFavoritesStore.getState().byId['fav-1']).toBeDefined()
     expect(screen.getByRole('button', { name: 'Remove from favorites' })).toBeOnTheScreen()
   })
+
+  it('keeps the relative date visible even with long tags', () => {
+    render(
+      <JobCard
+        job={makeJob({
+          category: 'Software Development',
+          type: JOB_TYPES.FULL_TIME,
+          publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 90),
+        })}
+        onPress={jest.fn()}
+      />,
+    )
+    expect(screen.getByText('3 months ago')).toBeOnTheScreen()
+  })
 })
