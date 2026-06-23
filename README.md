@@ -62,7 +62,7 @@ docs/
 
 | Decision                                  | Doc                                            |
 | ----------------------------------------- | ---------------------------------------------- |
-| Result pattern for async error handling   | [ADR-001](docs/adr/001-result-pattern.md)      |
+| Result pattern for error handling   | [ADR-001](docs/adr/001-result-pattern.md)      |
 | Agnostic domain and anti-corruption layer | [ADR-002](docs/adr/002-agnostic-domain.md)     |
 | Filter intermediary                       | [ADR-003](docs/adr/003-filter-intermediary.md) |
 | General structure and architecture        | [ARCHITECTURE.md](docs/ARCHITECTURE.md)        |

@@ -48,41 +48,53 @@ export const appError = <C extends string, D extends ErrorDetail>(
 ): AppError<C, D> => ({ code, detail, cause })
 ```
 
-### Error definition per module (`src/jobs/errors.ts`)
+### Error definition per module (`src/modules/jobs/job-errors.ts`)
 
 ```ts
-import type { AppError, NoDetail, ErrorDetail } from '@/shared/result'
+import type { AppError, NoDetail } from '@/shared/result'
 
 export const JOB_ERRORS = {
-  NOT_FOUND:       'job_not_found',
-  FILTERS_INVALID: 'job_filters_invalid',
+  NETWORK:      'job_network',
+  BAD_RESPONSE: 'job_bad_response',
+  NOT_FOUND:    'job_not_found',
 } as const
 
-type JobErrorCode = typeof JOB_ERRORS[keyof typeof JOB_ERRORS]
-
+// Maps each code to its detail shape. The computed keys
+// (`[JOB_ERRORS.X]`) keep code strings and map entries in sync.
 type JobErrorMap = {
-  [JOB_ERRORS.NOT_FOUND]:       NoDetail
-  [JOB_ERRORS.FILTERS_INVALID]: { fields: string[] }
-} satisfies Record<JobErrorCode, ErrorDetail>
+  [JOB_ERRORS.NETWORK]:      NoDetail
+  [JOB_ERRORS.BAD_RESPONSE]: NoDetail
+  [JOB_ERRORS.NOT_FOUND]:    { id: string }
+}
 
 export type JobError = {
   [K in keyof JobErrorMap]: AppError<K, JobErrorMap[K]>
 }[keyof JobErrorMap]
 ```
 
-`satisfies Record<JobErrorCode, ErrorDetail>` enforces that every code in the constant has a corresponding detail entry, TypeScript errors at compile time if one is missing.
+`JobError` is derived from `JobErrorMap`: it distributes over every key to build one `AppError` per code, then unions them. Each variant carries its own typed `detail`, so narrowing on `code` narrows `detail` too.
+
+To check at compile time that every code has a detail entry, assert it with a conditional type:
+
+```ts
+type JobErrorCode = (typeof JOB_ERRORS)[keyof typeof JOB_ERRORS]
+
+// errors at compile time if a code is missing from JobErrorMap
+type _AssertComplete = JobErrorCode extends keyof JobErrorMap ? true : never
+```
 
 ### Usage at the call site
 
 ```ts
-const result = await fetchJobs(filters)
+const result = await fetchJob(id)
 if (!result.ok) {
   switch (result.error.code) {
-    case JOB_ERRORS.NOT_FOUND:
+    case JOB_ERRORS.NETWORK:
+    case JOB_ERRORS.BAD_RESPONSE:
       // result.error.detail is NoDetail
       break
-    case JOB_ERRORS.FILTERS_INVALID:
-      // result.error.detail.fields is string[]
+    case JOB_ERRORS.NOT_FOUND:
+      // result.error.detail.id is string
       break
   }
   return
@@ -93,7 +105,7 @@ if (!result.ok) {
 ## Consequences
 
 - Callers are forced by the type system to handle the failure branch before accessing `.value`.
-- Adding a new error code without updating the map is a compile-time error.
+- `JobError` is derived from the map, so each code carries its own typed detail and `switch` on `code` narrows `detail`.
 - No `message` field — domain errors are codes + structured data. Presentation is a separate concern.
 - `cause?: unknown` mirrors `Error.cause` from JS, allowing internal errors to propagate without over-constraining the type.
 - `Result<T, E>` stays a generic primitive; `DomainResult<T, E>` constrains `E` to `AppError` for domain boundaries.
