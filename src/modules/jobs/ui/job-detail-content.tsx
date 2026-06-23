@@ -82,6 +82,24 @@ export function JobDetailContent({ job, onBack }: { job: Job; onBack: () => void
 
         <Text style={styles.sectionTitle}>Job Description</Text>
         <DescriptionRenderer ast={job.description} />
+
+        <Text style={styles.sectionTitle}>Publication Details</Text>
+        <View style={styles.detailSection}>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Published on</Text>
+            <Text style={styles.detailValue}>
+              {job.publishedAt.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>Job reference</Text>
+            <Text style={styles.detailValue}>{job.id}</Text>
+          </View>
+        </View>
       </ScrollView>
 
       <View style={styles.bottomBar}>
@@ -211,5 +229,29 @@ const useStyles = makeStyles(t => ({
     color: t.color.onPrimary,
     fontSize: t.font.size.bodyLg,
     fontWeight: t.font.weight.extrabold,
+  },
+  detailSection: {
+    backgroundColor: t.color.surfaceMuted,
+    borderRadius: t.radius.lg,
+    paddingHorizontal: t.spacing.lg,
+    paddingVertical: 6,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: t.color.borderSubtle,
+  },
+  detailLabel: {
+    fontSize: t.font.size.body,
+    fontWeight: t.font.weight.semibold,
+    color: t.color.textSecondary,
+  },
+  detailValue: {
+    fontSize: t.font.size.body,
+    fontWeight: t.font.weight.bold,
+    color: t.color.textPrimary,
   },
 }))
